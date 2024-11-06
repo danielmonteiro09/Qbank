@@ -1,0 +1,103 @@
+Configurar o Ambiente:
+
+Crie um novo projeto de console em C#.
+
+bsh
+
+dotnet new console -n MeuProjetoQBank
+cd MeuProjetoQBank
+
+#Instalar Pacotes Necessários#:
+
+#Instale o pacote Microsoft.Data.Sqlite para trabalhar com SQLite e Newtonsoft.Json para manipulação de JSON.#
+
+
+dotnet add package Microsoft.Data.Sqlite
+dotnet add package Newtonsoft.Json
+
+#Criar a Classe de Acesso ao Banco de Dados:#
+
+#Crie uma classe para gerenciar a conexão e as operações do banco de dados.#
+
+
+using Microsoft.Data.Sqlite;
+
+public class Database
+{
+
+    private readonly string connectionString;
+   
+    public Database(string dbPath)
+
+{
+ 
+   connectionString = $"Data Source={dbPath}";
+
+   InitializeDatabase();
+}
+
+private void InitializeDatabase()
+ { 
+    
+     using (var connection = new SqliteConnection(connectionString))
+
+      { 
+
+        connection.Open();
+
+        var command = connection.CreatCommand();
+        command.CommandText = 
+
+        @"  CREATE TABLE Conta (
+    ID_Conta INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nome_Cliente VARCHAR(100) NOT NULL,
+    CPF VARCHAR(11) UNIQUE NOT NULL,
+    Saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    Data_Criacao DATE NOT NULL
+);
+
+            CREATE TABLE Transacao (
+    ID_Transacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID_Conta_Origem INTEGER NOT NULL,
+    ID_Conta_Destino INTEGER NOT NULL,
+    Valor DECIMAL(10, 2) NOT NULL,
+    Data_Transacao DATE NOT NULL,
+    Tipo_Transacao VARCHAR(50) NOT NULL,  -- Ex: "Transferência", "Depósito", etc.
+    FOREIGN KEY (ID_Conta_Origem) REFERENCES Conta(ID_Conta),
+    FOREIGN KEY (ID_Conta_Destino) REFERENCES Conta(ID_Conta)
+);
+           
+           CREATE TABLE Emprestimo (
+    ID_Emprestimo INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID_Conta INTEGER NOT NULL,
+    Valor DECIMAL(10, 2) NOT NULL,
+    Data_Solicitacao DATE NOT NULL,
+    Juros DECIMAL(5, 2) NOT NULL,  -- Percentual de juros (ex: 3.5 para 3.5%)
+    Prazo INTEGER NOT NULL,         -- Prazo em meses
+    FOREIGN KEY (ID_Conta) REFERENCES Conta(ID_Conta)
+);
+
+             CREATE TABLE CartaoCredito (
+    ID_Cartao INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID_Conta INTEGER NOT NULL,
+    Limite DECIMAL(10, 2) NOT NULL,
+    Data_Aprovacao DATE NOT NULL,
+    Fatura_Atual DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (ID_Conta) REFERENCES Conta(ID_Conta)
+);
+
+              CREATE TABLE PagamentoServico (
+    ID_Pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+    ID_Conta INTEGER NOT NULL,
+    Servico VARCHAR(100) NOT NULL,  -- Ex: "Luz", "Água", "Internet", etc.
+    Valor DECIMAL(10, 2) NOT NULL,
+    Data_Pagamento DATE NOT NULL,
+    FOREIGN KEY (ID_Conta) REFERENCES Conta(ID_Conta)
+  );
+
+";
+ 
+       command.ExecuteNonQuery();
+    }
+
+ } 
