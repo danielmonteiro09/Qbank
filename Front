@@ -1,0 +1,215 @@
+#FRONT#
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco - Sistema de Gerenciamento</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Gerenciamento de Contas</h1>
+
+    <h2>Criar Conta</h2>
+    <form id="form-criar-conta">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" required><br>
+
+        <label for="saldo">Saldo Inicial:</label>
+        <input type="number" id="saldo" required><br>
+
+        <button type="submit">Criar Conta</button>
+    </form>
+
+    <h2>Listagem de Contas</h2>
+    <button onclick="listarContas()">Atualizar Lista</button>
+    <div id="lista-contas"></div>
+
+    <h2>Atualizar Conta</h2>
+    <form id="form-atualizar-conta">
+        <label for="idConta">ID da Conta:</label>
+        <input type="text" id="idConta" required><br>
+
+        <label for="novoNome">Novo Nome:</label>
+        <input type="text" id="novoNome" required><br>
+
+        <label for="novoSaldo">Novo Saldo:</label>
+        <input type="number" id="novoSaldo" required><br>
+
+        <button type="submit">Atualizar Conta</button>
+    </form>
+
+    <h2>Excluir Conta</h2>
+    <form id="form-excluir-conta">
+        <label for="idContaExcluir">ID da Conta:</label>
+        <input type="text" id="idContaExcluir" required><br>
+
+        <button type="submit">Excluir Conta</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
+JavaScript para Funcionalidades CRUD (script.js)
+javascript
+
+// URL base da API
+const apiURL = 'https://api.exemplo.com/contas';
+
+// Função para criar uma nova conta
+document.getElementById('form-criar-conta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nome = document.getElementById('nome').value;
+    const saldo = parseFloat(document.getElementById('saldo').value);
+
+    try {
+        const response = await axios.post(apiURL, { nome, saldo });
+        alert('Conta criada com sucesso!');
+        listarContas(); // Atualiza a lista de contas
+    } catch (error) {
+        console.error('Erro ao criar conta:', error);
+        alert('Erro ao criar conta.');
+    }
+});
+
+// Função para listar todas as contas
+async function listarContas() {
+    try {
+        const response = await axios.get(apiURL);
+        const contas = response.data;
+        const listaContas = document.getElementById('lista-contas');
+        listaContas.innerHTML = '';
+
+        contas.forEach((conta) => {
+            const contaDiv = document.createElement('div');
+            contaDiv.innerHTML = `
+                <p><strong>ID:</strong> ${conta.id}</p>
+                <p><strong>Nome:</strong> ${conta.nome}</p>
+                <p><strong>Saldo:</strong> ${conta.saldo}</p>
+            `;
+            listaContas.appendChild(contaDiv);
+        });
+    } catch (error) {
+        console.error('Erro ao listar contas:', error);
+        alert('Erro ao listar contas.');
+    }
+}
+
+// Função para atualizar uma conta
+document.getElementById('form-atualizar-conta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const idConta = document.getElementById('idConta').value;
+    const novoNome = document.getElementById('novoNome').value;
+    const novoSaldo = parseFloat(document.getElementById('novoSaldo').value);
+
+    try {
+        const response = await axios.put(`${apiURL}/${idConta}`, { nome: novoNome, saldo: novoSaldo });
+        alert('Conta atualizada com sucesso!');
+        listarContas(); // Atualiza a lista de contas
+    } catch (error) {
+        console.error('Erro ao atualizar conta:', error);
+        alert('Erro ao atualizar conta.');
+    }
+});
+
+
+// Função para excluir uma conta
+document.getElementById('form-excluir-conta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const idContaExcluir = document.getElementById('idContaExcluir').value;
+
+    try {
+        const response = await axios.delete(`${apiURL}/${idContaExcluir}`);
+        alert('Conta excluída com sucesso!');
+        listarContas(); // Atualiza a lista de contas
+    } catch (error) {
+        console.error('Erro ao excluir conta:', error);
+        alert('Erro ao excluir conta.');
+    }
+});
+
+
+///////////////////////////////////////////////////////////////////////////
+
+
+#JavaScript para Funcionalidades CRUD (script.js)#
+
+// URL base da API
+const apiURL = 'https://api.exemplo.com/contas';
+
+
+// Função para criar uma nova conta
+document.getElementById('form-criar-conta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nome = document.getElementById('nome').value;
+    const saldo = parseFloat(document.getElementById('saldo').value);
+
+    try {
+        const response = await axios.post(apiURL, { nome, saldo });
+        alert('Conta criada com sucesso!');
+        listarContas(); // Atualiza a lista de contas
+    } catch (error) {
+        console.error('Erro ao criar conta:', error);
+        alert('Erro ao criar conta.');
+    }
+});
+
+
+// Função para listar todas as contas
+async function listarContas() {
+    try {
+        const response = await axios.get(apiURL);
+        const contas = response.data;
+        const listaContas = document.getElementById('lista-contas');
+        listaContas.innerHTML = '';
+
+        contas.forEach((conta) => {
+            const contaDiv = document.createElement('div');
+            contaDiv.innerHTML = `
+                <p><strong>ID:</strong> ${conta.id}</p>
+                <p><strong>Nome:</strong> ${conta.nome}</p>
+                <p><strong>Saldo:</strong> ${conta.saldo}</p>
+            `;
+            listaContas.appendChild(contaDiv);
+        });
+    } catch (error) {
+        console.error('Erro ao listar contas:', error);
+        alert('Erro ao listar contas.');
+    }
+}
+
+
+// Função para atualizar uma conta
+document.getElementById('form-atualizar-conta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const idConta = document.getElementById('idConta').value;
+    const novoNome = document.getElementById('novoNome').value;
+    const novoSaldo = parseFloat(document.getElementById('novoSaldo').value);
+
+    try {
+        const response = await axios.put(`${apiURL}/${idConta}`, { nome: novoNome, saldo: novoSaldo });
+        alert('Conta atualizada com sucesso!');
+        listarContas(); // Atualiza a lista de contas
+    } catch (error) {
+        console.error('Erro ao atualizar conta:', error);
+        alert('Erro ao atualizar conta.');
+    }
+});
+
+
+// Função para excluir uma conta
+document.getElementById('form-excluir-conta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const idContaExcluir = document.getElementById('idContaExcluir').value;
+
+    try {
+        const response = await axios.delete(`${apiURL}/${idContaExcluir}`);
+        alert('Conta excluída com sucesso!');
+        listarContas(); // Atualiza a lista de contas
+    } catch (error) {
+        console.error('Erro ao excluir conta:', error);
+        alert('Erro ao excluir conta.');
+    }
+});
+
